@@ -44,54 +44,54 @@ def checkState(gameState, flags):
        flags = flags[:4] + "1" + flags[5:]
     if flags[0] == '1':
         if gameState[0] == gameState[2] and gameState[0] == gameState [4] and gameState[0] == '1':
-            print("X Wins") # Top Across
-            X = True
-        elif gameState[6] == gameState[8] and gameState[6] == gameState [10] and gameState[6] == '1':
-            print("X Wins") # Middle Across
-            X = True
-        elif gameState[12] == gameState[14] and gameState[12] == gameState [16] and gameState[12] == '1':
-            print("X Wins") # Bottom Across
-            X = True
-        elif gameState[0] == gameState[6] and gameState[0] == gameState [12] and gameState[0] == '1':
-            print("X Wins") # Left Down
-            X = True
-        elif gameState[2] == gameState[8] and gameState[2] == gameState [14] and gameState[2] == '1':
-            print("X Wins") # Middle Down
-            X = True
-        elif gameState[4] == gameState[10] and gameState[4] == gameState [16] and gameState[4] == '1':
-            print("X Wins") # Right Down
-            X = True
-        elif gameState[0] == gameState[8] and gameState[0] == gameState [16] and gameState[0] == '1':
-            print("X Wins") # Left Diagonal
-            X = True
-        elif gameState[4] == gameState[8] and gameState[4] == gameState [12] and gameState[4] == '1':
-            print("X Wins") # Right Diagonal
-            X = True
-    else:
-        if gameState[1] == gameState[3] and gameState[1] == gameState [5] and gameState[1] == '1':
             print("O Wins") # Top Across
             O = True
-        elif gameState[7] == gameState[9] and gameState[7] == gameState [11] and gameState[7] == '1':
+        elif gameState[6] == gameState[8] and gameState[6] == gameState [10] and gameState[6] == '1':
             print("O Wins") # Middle Across
             O = True
-        elif gameState[13] == gameState[15] and gameState[13] == gameState [17] and gameState[13] == '1':
+        elif gameState[12] == gameState[14] and gameState[12] == gameState [16] and gameState[12] == '1':
             print("O Wins") # Bottom Across
             O = True
-        elif gameState[1] == gameState[7] and gameState[1] == gameState [13] and gameState[1] == '1':
+        elif gameState[0] == gameState[6] and gameState[0] == gameState [12] and gameState[0] == '1':
             print("O Wins") # Left Down
             O = True
-        elif gameState[3] == gameState[9] and gameState[3] == gameState [15] and gameState[3] == '1':
+        elif gameState[2] == gameState[8] and gameState[2] == gameState [14] and gameState[2] == '1':
             print("O Wins") # Middle Down
             O = True
-        elif gameState[5] == gameState[11] and gameState[5] == gameState [17] and gameState[5] == '1':
+        elif gameState[4] == gameState[10] and gameState[4] == gameState [16] and gameState[4] == '1':
             print("O Wins") # Right Down
             O = True
-        elif gameState[1] == gameState[9] and gameState[1] == gameState [17] and gameState[1] == '1':
+        elif gameState[0] == gameState[8] and gameState[0] == gameState [16] and gameState[0] == '1':
             print("O Wins") # Left Diagonal
             O = True
-        elif gameState[5] == gameState[9] and gameState[5] == gameState [13] and gameState[5] == '1':
+        elif gameState[4] == gameState[8] and gameState[4] == gameState [12] and gameState[4] == '1':
             print("O Wins") # Right Diagonal
-            O = True
+            O = True 
+    else:
+        if gameState[1] == gameState[3] and gameState[1] == gameState [5] and gameState[1] == '1':
+            print("X Wins") # Top Across
+            X = True
+        elif gameState[7] == gameState[9] and gameState[7] == gameState [11] and gameState[7] == '1':
+            print("X Wins") # Middle Across
+            X = True
+        elif gameState[13] == gameState[15] and gameState[13] == gameState [17] and gameState[13] == '1':
+            print("X Wins") # Bottom Across
+            X = True
+        elif gameState[1] == gameState[7] and gameState[1] == gameState [13] and gameState[1] == '1':
+            print("X Wins") # Left Down
+            X = True
+        elif gameState[3] == gameState[9] and gameState[3] == gameState [15] and gameState[3] == '1':
+            print("X Wins") # Middle Down
+            X = True
+        elif gameState[5] == gameState[11] and gameState[5] == gameState [17] and gameState[5] == '1':
+            print("X Wins") # Right Down
+            X = True
+        elif gameState[1] == gameState[9] and gameState[1] == gameState [17] and gameState[1] == '1':
+            print("X Wins") # Left Diagonal
+            X = True
+        elif gameState[5] == gameState[9] and gameState[5] == gameState [13] and gameState[5] == '1':
+            print("X Wins") # Right Diagonal
+            X = True
     if X:
        flags = format(0, '014b')
        flags = flags[:2] + "1" + flags[3:]
@@ -184,16 +184,6 @@ def main():
         name = incoming_data[64:]
         if flags[0] == '1':
             print("You are X")
-            move = int(input("Select an even bit spot between 0-16 to make your move: "))
-            while move%2 != 0 or gameState[move+1] == '1' or gameState[move] == '1':
-                if move%2 != 0: 
-                    print("Position was not an even number")
-                else:
-                    print("Spot is already taken")
-                move = int(input("Select an even bit spot between 0-16 to make your move: "))
-            flags = "01" + flags[2:]
-        elif flags[1] == '1':
-            print("You are O")
             move = int(input("Select an odd bit spot between 1-17 to make your move: "))
             while move%2 != 1 or gameState[move-1] == '1' or gameState[move] == '1':
                 if move%2 != 1:
@@ -201,11 +191,31 @@ def main():
                 else:
                     print("Spot is already taken")
                 move = int(input("Select an odd bit spot between 1-17 to make your move: "))
+            flags = "01" + flags[2:]
+        elif flags[1] == '1':
+            print("You are O")
+            move = int(input("Select an even bit spot between 0-16 to make your move: "))
+            while move%2 != 0 or gameState[move+1] == '1' or gameState[move] == '1':
+                if move%2 != 0: 
+                    print("Position was not an even number")
+                else:
+                    print("Spot is already taken")
+                move = int(input("Select an even bit spot between 0-16 to make your move: "))
+            
             flags = "10" + flags[2:]
         gameState = gameState[:move] + "1" + gameState[move+1:]
+        (decision, flags) = checkState(gameState, flags)
+        if (decision):
+            print("Game has been decided")
+            if flags[2]:
+                print("X has Won")
+            elif flags[3]:
+                print("O has Won")
+            elif flags[4]:
+                print("The Game is a Tie")
+            break
 
-
-        msg = str(gameID) + str(serialID) + str(flags) + str(gameState) + str(name)
+        msg = str(gameID) + str(serialID) + str(flags) + str(gameState)  + str(name) # + str(bytes(name, 'utf-8'))
         print("Msg to Send: "+str(msg))
         send_data(udp_sock, (ip, port), msg)
 
@@ -213,38 +223,5 @@ def main():
     print_error(e, "socket")
 
 if __name__ == "__main__":
-#   gameState = int(format(0, '018b'))
-#   # gameState[0] = 1
-#   print(gameState)
-#   gameState += 1
-#   print(format(gameState,'018b'))
-#   gameID = ""
-#   for i in range(24):
-#     gameID += str(np.random.randint(0,2))
-#   # gameID[0] = 0
-#   gameID = int(gameID,2)
-#   print(gameID)
 
-#   data = "Test"
-#   print(''.join(format(ord(c),'b') for c in data))
-
-#   flags = format(0, '014b')
-#   print(flags)
-#   flags = int(flags, 2) + 1
-#   print(flags)
-#   flags = format(flags, '014b')
-#   print(flags)
-    # print("\tX")
-    # spot = np.random.randint(0,8)
-    # print(spot)
-    # print(spot * 2)
-    # print("\tO")
-    # spot = np.random.randint(0,8)
-    # print(spot)
-    # print(spot * 2 + 1)
-
-    # flags = format(0, '013b')
-    # flags = "1"+flags #Flag for X to move first
-
-    # print(flags[2] == '0')
     main()
