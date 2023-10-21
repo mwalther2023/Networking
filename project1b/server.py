@@ -1,7 +1,11 @@
 from concurrent.futures import ThreadPoolExecutor
+import threading
 import sys
 from socket import socket, SOCK_DGRAM, AF_INET
 import numpy as np
+import time
+allGames = {}
+lock = threading.Lock()
 def print_error(e, f="UNKNOWN"):
     print("Error in %s!" % (f))
     print(e)
@@ -34,6 +38,11 @@ def gamePlay(udp_sock):
 
   while True:
     try:
+      ## TODO Lock threads
+      
+      lock.acquire()
+      print("THREADS LOCKED")
+
       incoming_data, sender_ip, sender_port = recv_data(udp_sock)
       print("Incoming data: "+incoming_data)
     except Exception as e:
@@ -51,6 +60,7 @@ def gamePlay(udp_sock):
         else:
           print("Server is X")
           Xmove = True
+        
         print("Game ID: "+ str(incoming_data[:24]))
         print("Serial ID: "+ str(incoming_data[24:32]))
         print("Flags: "+ str(incoming_data[32:46]))
@@ -58,6 +68,7 @@ def gamePlay(udp_sock):
         print("Name: "+ str(incoming_data[64:]))
 
         gameID = incoming_data[:24]
+        allGames[gameID] = (incoming_data, time.time())
         serialID = incoming_data[24:32]
         serialID = int(serialID, 2) + 1
         serialID = format(serialID, '08b')
@@ -88,6 +99,22 @@ def gamePlay(udp_sock):
         name = incoming_data[64:]
         return_data = str(gameID) + str(serialID) + str(flags) + str(gameState) + str(name)
         send_data(udp_sock, (sender_ip, sender_port), return_data)
+        ## check old games for timeout
+        oldGames = []
+        for g in allGames.keys():
+          if time.time() - allGames[g][1] > (5*60):
+            # allGames.pop(g)
+            oldGames.append(g)
+            print("Adding game that has been idle to purge list")
+        for x in oldGames:
+          allGames.pop(x)
+          print("Purging game that has been idle")
+
+        ## TODO Unlock threads
+        lock.release()
+        print("THREADS UNLOCKED")
+
+
       except Exception as e:
         print_error(e, "send_data")
         udp_sock.close()
@@ -124,7 +151,15 @@ def main():
     udp_sock.bind((ip, port))
   except Exception as e:
     print_error(e, "bind")
-  thread = ThreadPoolExecutor(max_workers=2)
+  thread = ThreadPoolExecutor(max_workers=10)
+  thread.submit(gamePlay, udp_sock)
+  thread.submit(gamePlay, udp_sock)
+  thread.submit(gamePlay, udp_sock)
+  thread.submit(gamePlay, udp_sock)
+  thread.submit(gamePlay, udp_sock)
+  thread.submit(gamePlay, udp_sock)
+  thread.submit(gamePlay, udp_sock)
+  thread.submit(gamePlay, udp_sock)
   thread.submit(gamePlay, udp_sock)
   thread.submit(gamePlay, udp_sock)
 
