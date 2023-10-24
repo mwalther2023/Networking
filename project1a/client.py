@@ -111,7 +111,7 @@ def main():
       sys.exit(1)
   else:
         # ip = input("Enter IP: ")
-        ip = "192.168.1.12"
+        ip = "192.168.1.11"
         print("IP: "+ip)
         try:
             # port = int(input("Enter Port: "))
@@ -127,7 +127,7 @@ def main():
   else:
     # print("Must enter data to send as argument to program")
     data = input("Enter Player Name: ")
-    while len(data) > 35000:
+    while len(data) > 65000:
        print("Msg is to long to send, please re-enter")
     #    data = input("Enter data to send: ")
        data = input("Enter Player Name: ")
@@ -184,22 +184,22 @@ def main():
         name = incoming_data[64:]
         if flags[0] == '1':
             print("You are X")
-            move = int(input("Select an odd bit spot between 1-17 to make your move: "))
-            while move%2 != 1 or gameState[move-1] == '1' or gameState[move] == '1':
+            move = int(input("Select an odd bit spot between 1-17 to make your move: "))  
+            while move%2 != 1 or gameState[move-1] == '1' or gameState[move] == '1' or move > 17 or move < 1:
                 if move%2 != 1:
                     print("Position was not an odd number")
                 else:
-                    print("Spot is already taken")
+                    print("Invalid position")
                 move = int(input("Select an odd bit spot between 1-17 to make your move: "))
             flags = "01" + flags[2:]
         elif flags[1] == '1':
             print("You are O")
             move = int(input("Select an even bit spot between 0-16 to make your move: "))
-            while move%2 != 0 or gameState[move+1] == '1' or gameState[move] == '1':
+            while move%2 != 0 or gameState[move+1] == '1' or gameState[move] == '1' or move > 17 or move < 0:
                 if move%2 != 0: 
                     print("Position was not an even number")
                 else:
-                    print("Spot is already taken")
+                    print("Invalid position")
                 move = int(input("Select an even bit spot between 0-16 to make your move: "))
             
             flags = "10" + flags[2:]
