@@ -64,27 +64,31 @@ def main():
   read_sockets = [tcp_sock, sys.stdin]
   json_dic = {"action":"connect","user_name":"@","targets":[]}
   msg_dic = {"action":"message", "user_name":"@", "target":"", "message":""}
-  print("JSON Dictionary:"+str(json.dumps(json_dic)))
-  print("Enter user name: ")
-  data = sys.stdin.readline()
-  json_dic["user_name"] += data[:len(data)-1]
-  print(sys.getsizeof(json_dic["user_name"]))
-  while sys.getsizeof(json_dic["user_name"])-49 > 60:
-    print("Enter a shorter user name: ")
+  if data != 'quit\n':
+    print("JSON Dictionary:"+str(json.dumps(json_dic)))
+    print("Enter user name: ")
     data = sys.stdin.readline()
-    json_dic["user_name"] = "@"+str(data[:len(data)-1])
-  while data != "q\n":
-    print("Enter target or q to exit: ")
-    data = sys.stdin.readline()
-    print(sys.getsizeof("#"+data[:len(data)-1]))
-    if data == "q\n":
-      break
-    while sys.getsizeof("#"+data[:len(data)-1])-49 > 60:
-      print("Enter a shorter target: ")
+    json_dic["user_name"] += data[:len(data)-1]
+    #bytes(data, 'utf-8')
+    # print(sys.getsizeof(json_dic["user_name"]))
+    # print(sys.getsizeof(bytes(json_dic["user_name"], 'utf-8')))
+    while sys.getsizeof(bytes(json_dic["user_name"], 'utf-8'))-33 > 60:
+      print("Enter a shorter user name: ")
       data = sys.stdin.readline()
-      print(sys.getsizeof("#"+data[:len(data)-1]))
-    json_dic["targets"].append("#"+data[:len(data)-1])
-  print(json_dic)
+      json_dic["user_name"] = "@"+str(data[:len(data)-1])
+    while data != "q\n":
+      print("Enter target or q to exit: ")
+      data = sys.stdin.readline()
+      # print(sys.getsizeof("#"+data[:len(data)-1]))
+      # print(sys.getsizeof(bytes("#"+data[:len(data)-1], 'utf-8')))
+      if data == "q\n":
+        break
+      while sys.getsizeof(bytes("#"+data[:len(data)-1], 'utf-8'))-33 > 60:
+        print("Enter a shorter target: ")
+        data = sys.stdin.readline()
+        # print(sys.getsizeof(bytes("#"+data[:len(data)-1], 'utf-8')))
+      json_dic["targets"].append("#"+data[:len(data)-1])
+    print("Client connet message: "+str(json_dic))
   try:
     send_data(tcp_sock, json.dumps(json_dic))
     while data != 'quit\n':
@@ -103,29 +107,38 @@ def main():
             msg_dic["user_name"] = json_dic["user_name"]
             print("Enter target to message (include the user @ or room #): ")
             data = sys.stdin.readline()
-            print(sys.getsizeof(data[:len(data)-1]))
-            while sys.getsizeof(data[:len(data)-1])-49 > 60:
+            # print(sys.getsizeof(data[:len(data)-1]))
+            # print(sys.getsizeof(bytes(data[:len(data)-1], 'utf-8')))
+            while sys.getsizeof(bytes(data[:len(data)-1], 'utf-8'))-33 > 60:
               print("Enter a shorter target: ")
               data = sys.stdin.readline()
-              print(sys.getsizeof(data[:len(data)-1]))
+              # print(sys.getsizeof(data[:len(data)-1]))
+              print(sys.getsizeof(bytes(data[:len(data)-1], 'utf-8')))
             msg_dic["target"] = data[:len(data)-1]
 
             print("Enter message to send: ")
             data = sys.stdin.readline()
-            print(sys.getsizeof(data[:len(data)-1]))
-            while sys.getsizeof(data[:len(data)-1])-49 > 3800:
+            # print(sys.getsizeof(data[:len(data)-1]))
+            print(sys.getsizeof(bytes(data[:len(data)-1], 'utf-8')))
+            while sys.getsizeof(bytes(data[:len(data)-1], 'utf-8'))-33 > 3800:
               print("Enter shorter message to send: ")
               data = sys.stdin.readline()
-              print(sys.getsizeof(data[:len(data)-1]))
+              # print(sys.getsizeof(data[:len(data)-1]))
+              print(sys.getsizeof(bytes(data[:len(data)-1], 'utf-8')))
+
             msg_dic["message"] = data[:len(data)-1]
 
             print("After: " + str(json.dumps(msg_dic)))
             if data != 'quit\n':
               send_data(tcp_sock, json.dumps(msg_dic))
+          elif data == 'exit\n' or data == 'quit\n':
+            print("Got client quit.")
+            break
           elif data != 'quit\n':
             send_data(tcp_sock, json.dumps(json_dic))
           else:
-            print("Got client quit.")
+            # print("Got client quit.")
+            print("Unrecognized command: Please enter msg or exit/quit command")
       except KeyboardInterrupt as e:
         print("Got keyboard kill")
         data = 'quit\n'
