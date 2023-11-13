@@ -23,6 +23,17 @@ def recv_data(tcp_sock):
     print("Received %d bytes" % (len(data)))
     msg = json.loads(data.decode('utf-8'))
     print("Msg: "+str(msg))
+    if sys.getsizeof(bytes(msg["user_name"], 'utf-8'))-33 > 60:
+      tcp_sock.send(bytes(json.dumps(errorMsg), 'utf-8'))
+    elif sys.getsizeof(bytes(msg["target"], 'utf-8'))-33 > 60:
+      tcp_sock.send(bytes(json.dumps(errorMsg), 'utf-8'))
+    elif sys.getsizeof(bytes(msg["message"], 'utf-8'))-33 > 3800:
+      tcp_sock.send(bytes(json.dumps(errorMsg), 'utf-8'))
+    elif "targets" in msg:
+      for s in msg["targets"]:
+        if sys.getsizeof(bytes(s, 'utf-8'))-33 > 60:
+          tcp_sock.send(bytes(json.dumps(errorMsg), 'utf-8'))
+          break
     # print(type(msg))
     print(msg["action"])
     if msg["action"] == "message":
