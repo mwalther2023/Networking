@@ -23,26 +23,18 @@ def recv_data(tcp_sock):
     print("Received %d bytes" % (len(data)))
     msg = json.loads(data.decode('utf-8'))
     print("Msg: "+str(msg))
-    # if sys.getsizeof(bytes(msg["user_name"], 'utf-8'))-33 > 60:
-    #   tcp_sock.send(bytes(json.dumps(errorMsg), 'utf-8'))
-    # elif sys.getsizeof(bytes(msg["target"], 'utf-8'))-33 > 60:
-    #   tcp_sock.send(bytes(json.dumps(errorMsg), 'utf-8'))
-    # elif sys.getsizeof(bytes(msg["message"], 'utf-8'))-33 > 3800:
-    #   tcp_sock.send(bytes(json.dumps(errorMsg), 'utf-8'))
-    # elif "targets" in msg:
-    #   for s in msg["targets"]:
-    #     if sys.getsizeof(bytes(s, 'utf-8'))-33 > 60:
-    #       tcp_sock.send(bytes(json.dumps(errorMsg), 'utf-8'))
-    #       break
-    # print(type(msg))
-    # print(msg["action"])
+    if msg["action"] == "disconnect":
+      return False
     if msg["action"] == "message":
       if sys.getsizeof(bytes(msg["user_name"], 'utf-8'))-33 > 60:
         tcp_sock.send(bytes(json.dumps(errorMsg), 'utf-8'))
+        return True
       if sys.getsizeof(bytes(msg["target"], 'utf-8'))-33 > 60:
         tcp_sock.send(bytes(json.dumps(errorMsg), 'utf-8'))
+        return True
       if sys.getsizeof(bytes(msg["message"], 'utf-8'))-33 > 3800:
         tcp_sock.send(bytes(json.dumps(errorMsg), 'utf-8'))
+        return True
       chat = {"target":msg["target"], "from":msg["user_name"], "message":msg["message"]}
       history["history"].append(chat)
       print("History: "+str(history))
@@ -62,15 +54,18 @@ def recv_data(tcp_sock):
               clientList["socket"][u].send(bytes(outMsg, 'utf-8'))
       else:
         tcp_sock.send(bytes(json.dumps(errorMsg), 'utf-8'))
+        return True
 
     elif msg["action"] == "connect":
       if sys.getsizeof(bytes(msg["user_name"], 'utf-8'))-33 > 60:
         tcp_sock.send(bytes(json.dumps(errorMsg), 'utf-8'))
+        return True
       if "targets" in msg:
         for s in msg["targets"]:
           if sys.getsizeof(bytes(s, 'utf-8'))-33 > 60:
             tcp_sock.send(bytes(json.dumps(errorMsg), 'utf-8'))
-            break
+            return True
+          
       clientList["id"].append(msg["user_name"])
       clientList["rooms"].append(msg["targets"])
       clientList["socket"].append(tcp_sock)
@@ -167,6 +162,7 @@ def main():
             print("Closing client socket.")
             client.close()
             read_sockets.remove(client)
+            write_sockets.remove(client)
             except_sockets.remove(client)
         except KeyboardInterrupt as k:
           quit = True
@@ -177,6 +173,7 @@ def main():
         print("Closing client socket (client in except?).")
         client.close()
         read_sockets.remove(client)
+        write_sockets.remove(client)
         except_sockets.remove(client)
   try:
     print("Closing sockets.")
