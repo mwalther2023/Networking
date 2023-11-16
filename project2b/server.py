@@ -24,6 +24,12 @@ def recv_data(tcp_sock):
     msg = json.loads(data.decode('utf-8'))
     print("Msg: "+str(msg))
     if msg["action"] == "disconnect":
+      print("Removed from client list")
+      ind = clientList["socket"].index(tcp_sock)
+      print("At index: "+str(ind))
+      clientList["id"].remove(clientList["id"][ind])
+      clientList["rooms"].remove(clientList["rooms"][ind])
+      clientList["socket"].remove(clientList["socket"][ind])
       return False
     if msg["action"] == "message":
       if sys.getsizeof(bytes(msg["user_name"], 'utf-8'))-33 > 60:
@@ -138,6 +144,9 @@ def main():
       quit = True
     except Exception as e:
       print_error(e, "select")
+      print("read_sockets: "+str(read_sockets))
+      print("write_sockets: "+str(write_sockets))
+      print("except_sockets: "+str(except_sockets))
 
     if server_sock in readlist:
       try:
